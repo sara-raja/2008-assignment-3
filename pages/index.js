@@ -42,7 +42,7 @@ export default function Home() {
     // console.log(`rating: ${rating}`)
 
     // check for errors
-    if (title.length === 0 || author.length === 0 || rating.length === 0){
+    if (title.trim() === "" || author.trim() === "" || rating.trim() === ""){
       flipError(true)
     }
     else{
@@ -55,22 +55,6 @@ export default function Home() {
     }
   }
   
-  // filter books:
-  const [search, setSearch]= useState("")
-
-  const filterHandler =(event)=>{
-    setSearch(event.target.value)
-    let filteredBookList = [...bookList]
-
-    if(search.trim() !== ""){
-      console.log(filteredBookList)
-      filteredBookList = filteredBookList.filter((bookData)=>{
-        return bookData.title.toLowerCase().includes(search.trim().toLowerCase())
-      })
-      setBookList(filteredBookList)
-    }
-    // it rewrites the array though.. :/
-  }
 
   return (
     <div>
@@ -133,17 +117,6 @@ export default function Home() {
                 </Stack>
                 }
            </Paper>
-           <Grid item xs={12} sm={4}>
-            <TextField
-              id="search"
-              name="search" 
-              label="search title"
-              variant="standard"
-              margin='dense'
-              onChange={filterHandler}
-              value={search}
-            />
-            </Grid>
           <FavouriteBooks books={bookList} />
         </Container>
       </main>
