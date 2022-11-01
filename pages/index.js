@@ -1,15 +1,19 @@
+import { useState } from 'react';
 import Head from 'next/head'
-import Image from 'next/image'
 
 import Container from '@mui/material/Container'
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Stack from '@mui/material/Stack';
 
 import NavBar from '../components/NavBar'
 import Title from '../components/Title'
 import FavouriteBooks from '../components/FavouriteBooks'
+import { Typography } from '@mui/material';
 
 const FAVOURITE_BOOKS = [
   {
@@ -25,6 +29,31 @@ const FAVOURITE_BOOKS = [
 ]
 
 export default function Home() {
+  const [title,setTitle] =useState("")
+  const[author, setAuthor] = useState("")
+  const [rating, setRating] = useState("")
+  const[bookList, setBookList] = useState(FAVOURITE_BOOKS)
+  const [error, flipError] = useState(false)
+
+  const handleAddSubmit = (event)=>{
+    event.preventDefault()
+    console.log(`title: ${title}`)
+    console.log(`author: ${author}`)
+    console.log(`rating: ${rating}`)
+    // check for errors
+    if (title.length === 0 || author.length === 0 || rating.length === 0){
+      flipError(true)
+    }
+    else{
+      flipError(false)
+      // console.log(bookList)
+
+      // input into the booklist:
+      const newBookList =[...bookList, {title:`${title}`, author:`${author}`, rating:`${rating}`}]
+      setBookList(newBookList)
+    }
+  }
+
   return (
     <div>
       <Head>
@@ -37,35 +66,56 @@ export default function Home() {
         <Container sx={{paddingTop: '2rem'}} maxWidth="md">
            <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', marginBottom: "2rem"}}>
               <Title>Add a New Favourite</Title>
-              <form>
+              <form onSubmit={handleAddSubmit}>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={4}>
                     <TextField
-                      required
                       id="title"
                       name="title"
                       label="Book Title"
                       fullWidth
                       variant="standard"
+                      onChange={(event)=>{setTitle(event.target.value)}}
+                      value={title}
                     />
                   </Grid>
-                  <Grid item xs={10} sm={4}>
+                  <Grid item xs={12} sm={4}>
                     <TextField
-                      required
                       id="author"
                       name="author"
                       label="Author"
                       fullWidth
                       variant="standard"
+                      onChange={(event)=>{setAuthor(event.target.value)}}
+                      value={author}
+                    />
+                  </Grid>
+                  <Grid item xs={4} sm={2}>
+                    <TextField
+                      id="rating"
+                      name="rating"
+                      label="Rating"
+                      fullWidth
+                      variant="standard"
+                      onChange={(event)=>{setRating(event.target.value)}}
+                      value={rating}
                     />
                   </Grid>
                   <Grid item xs={2} sm={2}>
-                    <Button variant="contained" sx={{ mt: 1.5, ml: 1 }}>Add</Button>
+                    <Button type="submit" variant="contained" sx={{ mt: 1.5, ml: 1 }}>Add</Button>
                   </Grid>
                 </Grid>
               </form>
+                {error === true &&              
+                <Stack sx={{ width: '100%' }} spacing={2}>
+                  <Alert severity="error">
+                  <AlertTitle>Error</AlertTitle>
+                    Please enter all values correctly.
+                  </Alert>
+                </Stack>
+                }
            </Paper>
-          <FavouriteBooks books={FAVOURITE_BOOKS} />
+          <FavouriteBooks books={bookList} />
         </Container>
       </main>
     </div>
